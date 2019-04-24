@@ -19,24 +19,19 @@ namespace StageDocsSrv
             {
                 var apiClient = new ApiClient();
                 SuppDocsFinder suppDoc = new SuppDocsFinder(apiClient);
-
                 DirectoryInfo pickupDir = new DirectoryInfo(DSConfig.PickupDir);
 
                 foreach (var envDir in pickupDir.GetDirectories("*", SearchOption.AllDirectories))
                 {
-                    //Get Supplemental Document Name
-                    //Copy each file in the directory to the ingestion directory (except Supp Doc)
                     if (!envDir.Name.Equals(".downloaded"))
                     {
                         if (DSConfig.excSuppDocs.Equals("TRUE"))
                         {
-                            //get the supplemental document name
-                            String docName = suppDoc.GetDocName(envDir.Name);
+                            List<String> docNames = suppDoc.GetDocNames(envDir.Name);
 
-                            if (docName.Equals("NoSuppDocFound"))
+                            if (docNames.Contains("NoSuppDocFound"))
                             {
                                 Log.Info("Supplement Document Not Found for the following Envelope :: " + envDir.Name);
-                                //for each file in the envelope
                                 foreach (var file in envDir.GetFiles())
                                 {
                                     newFileName = envDir.Name + "_" + file.Name;
@@ -46,14 +41,12 @@ namespace StageDocsSrv
                             else
                             {
                                 Log.Info("Supplement Document Found for the following Envelope :: " + envDir.Name);
-                                Log.Info("Supplement Document Name :: " + docName);
                                 foreach (var file in envDir.GetFiles())
                                 {
-                                    //check if suppDocName match the file name
-                                    if (file.Name.Equals(docName + ".pdf"))
+                                    if (docNames.Contains(file.Name))
                                     {
                                         file.Delete();
-                                        Log.Info("The Following File was Identified as a Supplemental Document and was successfully deleted - Document Name :: " + docName + ".pdf");
+                                        Log.Info("The Following File was Identified as a Supplemental Document and was successfully deleted - Document Name :: " + file);
                                     }
                                     else
                                     {
@@ -63,7 +56,6 @@ namespace StageDocsSrv
                                 }
                             }
                             envDir.Delete();
-
                         }
                         else
                         {
