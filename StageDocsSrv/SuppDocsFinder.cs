@@ -59,7 +59,10 @@ namespace StageDocsSrv
                 {
                     if (doc.Display.Equals("modal"))
                     {
-                        docNames.Add(doc.Name);
+                        if (doc.Name.EndsWith("docx"))
+                            docNames.Add(doc.Name + ".pdf");
+                        else
+                            docNames.Add(doc.Name);
                      //   count++;
                     }
                 }
