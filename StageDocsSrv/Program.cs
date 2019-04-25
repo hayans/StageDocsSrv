@@ -20,7 +20,8 @@ namespace StageDocsSrv
                 var apiClient = new ApiClient();
                 SuppDocsFinder suppDoc = new SuppDocsFinder(apiClient);
                 DirectoryInfo pickupDir = new DirectoryInfo(DSConfig.PickupDir);
-
+                
+                //Iterate Thru the dir
                 foreach (var envDir in pickupDir.GetDirectories("*", SearchOption.AllDirectories))
                 {
                     if (!envDir.Name.Equals(".downloaded"))
